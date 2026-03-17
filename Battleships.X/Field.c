@@ -23,26 +23,24 @@
 #include "Message.h"
 #include "Field.h"
 
-#define two 2
-// Define functions
 
 
 
 
 void FieldInit(Field *own_field, Field * opp_field) {
     int player1row, player1col;
-    for (player1row = 0; player1row < FIELD_ROWS - 1; player1row++) 
+    for (player1row = 0; player1row < FIELD_ROWS; player1row++)
     {
-        for (player1col = 0; player1col < FIELD_COLS - 1; player1col++) 
+        for (player1col = 0; player1col < FIELD_COLS; player1col++)
         {
             own_field->grid[player1row][player1col] = FIELD_SQUARE_EMPTY;
         }
     }
 
     int player2row, player2col;
-    for (player2row = 0; player2row < FIELD_ROWS - 1; player2row++)
+    for (player2row = 0; player2row < FIELD_ROWS; player2row++)
     {
-        for (player2col = 0; player2col < FIELD_COLS - 1; player2col++) 
+        for (player2col = 0; player2col < FIELD_COLS; player2col++)
         {
             opp_field->grid[player2row][player2col] = FIELD_SQUARE_UNKNOWN;
         }
@@ -63,7 +61,7 @@ SquareStatus FieldGetSquareStatus(const Field *f, uint8_t row, uint8_t col) {
     {
         return FIELD_SQUARE_INVALID;
     }
-    if ((col > FIELD_ROWS - 1) || (col < 0))
+    if ((col > FIELD_COLS - 1) || (col < 0))
     {
         return FIELD_SQUARE_INVALID;
     }
@@ -83,13 +81,7 @@ SquareStatus FieldSetSquareStatus(Field *f, uint8_t row, uint8_t col, SquareStat
 // Starting FieldAddBoat
 uint8_t FieldAddBoat(Field *own_field, uint8_t row, uint8_t col, BoatDirection dir, BoatType boat_type) {
 
-    if ((dir != FIELD_DIR_EAST) && (dir != FIELD_DIR_SOUTH) ) {
-        return STANDARD_ERROR;
-    }
-    if ((boat_type != FIELD_BOAT_TYPE_HUGE) && (boat_type != FIELD_BOAT_TYPE_LARGE)) {
-        return STANDARD_ERROR;
-    }
-    if ((boat_type != FIELD_BOAT_TYPE_SMALL) && (boat_type != FIELD_BOAT_TYPE_MEDIUM)) {
+    if ((dir != FIELD_DIR_EAST) && (dir != FIELD_DIR_SOUTH)) {
         return STANDARD_ERROR;
     }
 
@@ -352,37 +344,25 @@ SquareStatus FieldUpdateKnowledge(Field *opp_field, const GuessData *own_guess){
     SquareStatus statusoffield = FieldGetSquareStatus(opp_field, own_guess->row, own_guess->col);
 
 
-    if ((statusoffield == FIELD_SQUARE_LARGE_BOAT)) {
+    if (statusoffield == FIELD_SQUARE_LARGE_BOAT) {
         if (opp_field->largeBoatLives == 0) {
             opp_field->grid[own_guess->row][own_guess->col] = RESULT_LARGE_BOAT_SUNK;
         } else {
             opp_field->grid[own_guess->row][own_guess->col] = RESULT_HIT;
         }
-    } else {
-        opp_field->grid[own_guess->row][own_guess->col] = RESULT_MISS;
-    }
-    
-    if ((statusoffield == FIELD_SQUARE_HUGE_BOAT)) {
+    } else if (statusoffield == FIELD_SQUARE_HUGE_BOAT) {
         if (opp_field->hugeBoatLives == 0) {
             opp_field->grid[own_guess->row][own_guess->col] = RESULT_HUGE_BOAT_SUNK;
         } else {
             opp_field->grid[own_guess->row][own_guess->col] = RESULT_HIT;
         }
-    } else {
-        opp_field->grid[own_guess->row][own_guess->col] = RESULT_MISS;
-    }
-    
-    if ((statusoffield == FIELD_SQUARE_MEDIUM_BOAT)) {
+    } else if (statusoffield == FIELD_SQUARE_MEDIUM_BOAT) {
         if (opp_field->mediumBoatLives == 0) {
             opp_field->grid[own_guess->row][own_guess->col] = RESULT_MEDIUM_BOAT_SUNK;
         } else {
             opp_field->grid[own_guess->row][own_guess->col] = RESULT_HIT;
         }
-    } else {
-        opp_field->grid[own_guess->row][own_guess->col] = RESULT_MISS;
-    }
-    
-    if ((statusoffield == FIELD_SQUARE_SMALL_BOAT)) {
+    } else if (statusoffield == FIELD_SQUARE_SMALL_BOAT) {
         if (opp_field->smallBoatLives == 0) {
             opp_field->grid[own_guess->row][own_guess->col] = RESULT_SMALL_BOAT_SUNK;
         } else {
@@ -405,74 +385,20 @@ SquareStatus FieldUpdateKnowledge(Field *opp_field, const GuessData *own_guess){
  * @return A 4-bit value with each bit corresponding to whether each ship is alive or not.
  */
 uint8_t FieldGetBoatStates(const Field *f){
-    
-    if((f->largeBoatLives) && (f->hugeBoatLives) && (f->smallBoatLives > 0) && (f->mediumBoatLives > 0) )
-    {
-        return FIELD_BOAT_STATUS_LARGE |  FIELD_BOAT_STATUS_HUGE | FIELD_BOAT_STATUS_SMALL | FIELD_BOAT_STATUS_MEDIUM;
-        
-    } 
-    else if((f->hugeBoatLives) && (f->largeBoatLives > 0)  && (f->smallBoatLives > 0))
-    {
-        return FIELD_BOAT_STATUS_HUGE | FIELD_BOAT_STATUS_LARGE | FIELD_BOAT_STATUS_SMALL;
-        
+    uint8_t states = 0;
+    if (f->smallBoatLives > 0) {
+        states |= FIELD_BOAT_STATUS_SMALL;
     }
-    else if((f->largeBoatLives) && (f->mediumBoatLives > 0) && (f->smallBoatLives > 0))
-    {
-        return FIELD_BOAT_STATUS_LARGE | FIELD_BOAT_STATUS_MEDIUM | FIELD_BOAT_STATUS_SMALL;
-        
+    if (f->mediumBoatLives > 0) {
+        states |= FIELD_BOAT_STATUS_MEDIUM;
     }
-    else if((f->hugeBoatLives) && (f->mediumBoatLives > 0) && (f->smallBoatLives > 0))
-    {
-        return FIELD_BOAT_STATUS_HUGE | FIELD_BOAT_STATUS_MEDIUM | FIELD_BOAT_STATUS_SMALL;
-        
+    if (f->largeBoatLives > 0) {
+        states |= FIELD_BOAT_STATUS_LARGE;
     }
-    else if(f->largeBoatLives > 0){
-        return FIELD_BOAT_STATUS_LARGE;
-      
+    if (f->hugeBoatLives > 0) {
+        states |= FIELD_BOAT_STATUS_HUGE;
     }
-    else if(f->mediumBoatLives > 0){
-        return FIELD_BOAT_STATUS_MEDIUM;
-        
-    }
-    else if(f->smallBoatLives > 0){
-        return FIELD_BOAT_STATUS_SMALL;
-        
-    }
-    else if(f->hugeBoatLives > 0){
-        return FIELD_BOAT_STATUS_HUGE;
-    }
-    else if((f->largeBoatLives > 0) && (f->mediumBoatLives > 0))
-    {
-        return FIELD_BOAT_STATUS_LARGE | FIELD_BOAT_STATUS_MEDIUM;
-        
-    }
-    else if((f->hugeBoatLives > 0) && (f->mediumBoatLives > 0))
-    {
-        return FIELD_BOAT_STATUS_HUGE | FIELD_BOAT_STATUS_MEDIUM;
-        
-    }
-    else if((f->hugeBoatLives > 0) && (f->largeBoatLives > 0)){
-        return FIELD_BOAT_STATUS_HUGE | FIELD_BOAT_STATUS_LARGE;
-        
-    }
-    else if((f->mediumBoatLives > 0) && (f->smallBoatLives > 0))
-    {
-        return FIELD_BOAT_STATUS_MEDIUM | FIELD_BOAT_STATUS_SMALL ;
-        
-    }
-    else if((f->largeBoatLives > 0) && (f->smallBoatLives > 0))
-    {
-        return FIELD_BOAT_STATUS_LARGE | FIELD_BOAT_STATUS_SMALL;
-        
-    }
-    else if((f->hugeBoatLives > 0) && (f->smallBoatLives > 0))
-    {
-        return FIELD_BOAT_STATUS_HUGE | FIELD_BOAT_STATUS_SMALL;
-        
-    }
-    
-    
-    return 0x00;
+    return states;
 }
 
 
@@ -488,7 +414,7 @@ uint8_t FieldAIPlaceAllBoats(Field *own_field){
     uint8_t placement;
     uint8_t list;
     while (1){
-        Boatdir=rand() % two;
+        Boatdir=rand() % 2;
         col=rand()%FIELD_COLS;
         row=rand()%FIELD_ROWS;
         
@@ -539,10 +465,7 @@ GuessData FieldAIDecideGuess(const Field *opp_field){
     SquareStatus statusofenemy = FieldGetSquareStatus(opp_field, finalguess.row, finalguess.col);
     
     if((statusofenemy == FIELD_SQUARE_HIT) || (statusofenemy == FIELD_SQUARE_MISS)){
-        FieldAIDecideGuess(opp_field);
+        return FieldAIDecideGuess(opp_field);
     }
-    else
-    {
-        return finalguess;
-    }
+    return finalguess;
 }

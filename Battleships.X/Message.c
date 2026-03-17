@@ -18,54 +18,6 @@ int liveChecksumLen = 0;
 char newPayloadString[256] = "";
 char newChecksumString[256] = "";
 
-//char test1[256] = "CAT";
-//uint8_t answer = 0;
-//
-//char *test2 = "RES,1,0,3";
-//char *checksum2 = "5A";
-//BB_Event event1;
-//
-//char *test3 = "SHO,7,3";
-//char *checksum3 = "50";
-//BB_Event event2;
-//BB_Event event3;
-//
-//Message message1;
-//char *exitString;
-
-
-//int main() {
-//    
-//    message1.type = MESSAGE_CHA;
-//    message1.param0 = 2;
-//    
-//    uint8_t answer = Message_CalculateChecksum(test1);
-//    int answer2 = Message_ParseMessage(test2, checksum2, &event1);
-//    int answer3 = Message_ParseMessage(test3, checksum3, &event2);
-//    exitString = (char*)malloc(MESSAGE_MAX_LEN);
-//    int answer4 = Message_Encode(exitString, message1);
-//    int answer5 = strlen(exitString);
-//    int answer6 = Message_Decode('$', &event3);
-//    int answer7 = Message_Decode('R', &event3);
-//    int answer8 = Message_Decode('E', &event3);
-//    int answer9 = Message_Decode('S', &event3);
-//    int answer10 = Message_Decode(',', &event3);
-//    int answer11 = Message_Decode('1', &event3);
-//    int answer12 = Message_Decode(',', &event3);
-//    int answer13 = Message_Decode('0', &event3);
-//    int answer14 = Message_Decode(',', &event3);
-//    int answer15 = Message_Decode('3', &event3);
-//    int answer16 = Message_Decode('*', &event3);
-//    int answer17 = Message_Decode('5', &event3);
-//    int answer18 = Message_Decode('A', &event3);
-//    int answer19 = Message_Decode('\n', &event3);
-//    
-//  
-//    
-//    return 0;
-//    
-//}
-
 /**
  * Given a payload string, calculate its checksum
  * 
@@ -244,18 +196,6 @@ int Message_ParseMessage(const char* payload,
  * @param message_to_encode  A message to encode
  * @return                   The length of the string stored into 'message_string'.
                              Return 0 if message type is MESSAGE_NONE.
- * 
- * typedef enum {
-    MESSAGE_NONE, //used if no message is to be sent
-    MESSAGE_CHA,
-    MESSAGE_ACC,
-    MESSAGE_REV,
-    MESSAGE_SHO,
-    MESSAGE_RES,
-            
-    //while not required, an error message can be a useful debugging tool:
-    MESSAGE_ERROR = -1, 
-} MessageType;
  */
 int Message_Encode(char *message_string, Message message_to_encode) {
     char returnstring[MESSAGE_MAX_LEN] = "";

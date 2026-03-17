@@ -13,27 +13,6 @@
 #include <stdio.h>
 #include <ctype.h>
 
-BB_Event test1;
-Message ans1;
-
-/**BB_EVENT_NO_EVENT, //0
-    BB_EVENT_START_BUTTON, //1
-    BB_EVENT_RESET_BUTTON, //2
-    BB_EVENT_CHA_RECEIVED, //3
-    BB_EVENT_ACC_RECEIVED, //4
-    BB_EVENT_REV_RECEIVED, //5
-    BB_EVENT_SHO_RECEIVED, //6
-    BB_EVENT_RES_RECEIVED, //7
-    BB_EVENT_MESSAGE_SENT, //8
-    BB_EVENT_ERROR, //9*/
-
-int main () {
-    AgentInit();
-    test1.type = BB_EVENT_START_BUTTON;
-    ans1 = AgentRun(test1);
-    return 1;
-}
-
 typedef struct {
     AgentState currentState;
     int counter;
@@ -64,20 +43,7 @@ User resetPlayer;
 * If you are using any other persistent data in Agent SM, that should be reset as well.
 * 
 * It is not advised to call srand() inside of AgentInit.  
- * 
- * typedef enum {
-    AGENT_STATE_START, //0
-    AGENT_STATE_CHALLENGING, //1
-    AGENT_STATE_ACCEPTING, //2
-    AGENT_STATE_ATTACKING, //3
-    AGENT_STATE_DEFENDING, //4
-    AGENT_STATE_WAITING_TO_SEND, //5
-    AGENT_STATE_END_SCREEN, //6
-
-    //If implementing a human agent, you will need a state to setup boats:
-    AGENT_STATE_SETUP_BOATS, //7
-} AgentState;
-*  */
+ */
 
 void AgentInit(void) {
     currentAgent.currentState = AGENT_STATE_START;
@@ -98,24 +64,6 @@ void AgentInit(void) {
  * passed to the transmission module and sent via UART.
  * This is handled at the top level! AgentRun is ONLY responsible 
  * for generating the Message struct, not for encoding or sending it.
- * 
- * typedef enum {
-    BB_EVENT_NO_EVENT, //0
-    BB_EVENT_START_BUTTON, //1
-    BB_EVENT_RESET_BUTTON, //2
-    BB_EVENT_CHA_RECEIVED, //3
-    BB_EVENT_ACC_RECEIVED, //4
-    BB_EVENT_REV_RECEIVED, //5
-    BB_EVENT_SHO_RECEIVED, //6
-    BB_EVENT_RES_RECEIVED, //7
-    BB_EVENT_MESSAGE_SENT, //8
-    BB_EVENT_ERROR, //9
-
-    //the following events are only used for human agents:
-    BB_EVENT_SOUTH_BUTTON, //10
-    BB_EVENT_EAST_BUTTON, //11
-
-} BB_EventType;
  */
 Message AgentRun(BB_Event event) {
     Message returnMessage;
