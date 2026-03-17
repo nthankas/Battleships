@@ -1,0 +1,13 @@
+# MPLAB X / NetBeans build artifacts
+*.X/build/
+*.X/dist/
+*.X/.generated_files/
+*.X/nbproject/private/
+
+# Compiled libraries and objects
+*.a
+*.o
+*.d
+*.hex
+*.elf
+*.log.inx
